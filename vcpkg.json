@@ -1,0 +1,12 @@
+**Filename:** `vcpkg.json`
+```json
+{
+  "name": "vollab-terminal",
+  "version-string": "0.1.0",
+  "dependencies": [
+    "catch2",
+    "fmt",
+    "spdlog",
+    "nlohmann-json"
+  ]
+}
