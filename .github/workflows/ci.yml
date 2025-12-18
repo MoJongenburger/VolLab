@@ -8,34 +8,32 @@ jobs:
   build-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Ninja (Ubuntu)
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      # Installs CMake + Ninja on all runners
+      - uses: lukka/get-cmake@latest
 
-      - name: Install Ninja (macOS)
-        if: runner.os == 'macOS'
-        run: brew install ninja || true
-
+      # Sets up vcpkg (and enables caching). It will use your vcpkg.json manifest.
       - name: Setup vcpkg
-        uses: actions/setup-vcpkg@v1
+      - uses: lukka/run-vcpkg@v11
         with:
-          vcpkg-json: vcpkg.json
-          cache-key: ${{ runner.os }}-vollab-${{ hashFiles('vcpkg.json') }}
+          vcpkgJsonGlob: 'vcpkg.json'
 
       - name: Configure
-        run: >
-          cmake -S . -B build -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        shell: bash
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
       - name: Build
+        shell: bash
         run: cmake --build build
 
       - name: Test
+        shell: bash
         run: ctest --test-dir build --output-on-failure
