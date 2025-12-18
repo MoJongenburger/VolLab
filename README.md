@@ -27,23 +27,7 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ```
 
-````
 
-#### File 2: `vcpkg.json`
-This is a **separate file**. Create a new file named `vcpkg.json` and paste **only this**:
-
-```json
-{
-  "name": "vollab-terminal",
-  "version-string": "0.1.0",
-  "dependencies": [
-    "catch2",
-    "fmt",
-    "spdlog",
-    "nlohmann-json"
-  ]
-}
-````
 
 
 
