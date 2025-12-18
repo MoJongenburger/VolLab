@@ -22,7 +22,7 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgJsonGlob: '**/vcpkg.json'
+          vcpkgJsonGlob: 'vcpkg.json'
 
       - name: Configure
         shell: bash
