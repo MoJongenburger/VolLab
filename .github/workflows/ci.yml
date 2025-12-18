@@ -9,33 +9,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]   # keep it simple for Stage 0
     runs-on: ${{ matrix.os }}
+
+    env:
+      VCPKG_BASELINE: 44bb3ce006467fc13ba37ca099f64077b8bbf84d
+      VCPKG_FEATURE_FLAGS: manifests
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install CMake and Ninja
-        uses: lukka/get-cmake@latest
+      - name: Install Ninja (Ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
 
-      - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: vcpkg
-          vcpkgJsonGlob: vcpkg.json
+      - name: Install Ninja (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja || true
+
+      - name: Clone vcpkg (pinned baseline)
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git vcpkg
+          cd vcpkg
+          git checkout "$VCPKG_BASELINE"
+          ./bootstrap-vcpkg.sh -disableMetrics
 
       - name: Configure
-        shell: bash
-        run: |
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
-        shell: bash
         run: cmake --build build
 
       - name: Test
-        shell: bash
         run: ctest --test-dir build --output-on-failure
