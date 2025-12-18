@@ -5,6 +5,10 @@
     "catch2",
     "fmt",
     "spdlog",
-    "nlohmann-json"
+    "nlohmann-json",
+    "openssl",
+    "boost-asio",
+    "boost-beast",
+    "boost-system"
   ]
 }
