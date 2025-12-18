@@ -1,0 +1,18 @@
+# Build output
+/build/
+/out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Testing/
+compile_commands.json
+*.ninja
+.ninja*
+
+# vcpkg artifacts
+vcpkg_installed/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
