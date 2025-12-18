@@ -1,5 +1,7 @@
 # VolLab Terminal
 
+This project is in progress
+
 A professional C++20 scaffold for a quant/market-data terminal.
 
 ## Stage 0 includes
